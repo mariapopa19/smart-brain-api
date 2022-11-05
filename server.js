@@ -1,10 +1,26 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt-nodejs");
+const cors = require("cors");
+const knex = require("knex");
+
+const porstgres = knex({
+  client: "pg",
+  connection: {
+    host: "127.0.0.1", // localhost
+    port: 5432,
+    user: "postgres",
+    password: "1234",
+    database: "smart-brain",
+  },
+});
+
+console.log(porstgres.select("*").from("users"));
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 const database = {
   users: [
@@ -38,26 +54,26 @@ app.get("/", (req, res) => {
   res.send(database.users);
 });
 
-app.post("/singin", (req, res) => {
+app.post("/signin", (req, res) => {
   bcrypt.compare(
     "apples",
     "$2a$10$nheq5sKmjdLb0bcaDysTSe2SL3s6Affcw.i5xnpyp3HL3HfyHfAyS",
     function (err, res) {
-      console.log("first guess", res);
+      // console.log("first guess", res);
     }
   );
   bcrypt.compare(
     "veggies",
     "$2a$10$nheq5sKmjdLb0bcaDysTSe2SL3s6Affcw.i5xnpyp3HL3HfyHfAyS",
     function (err, res) {
-      console.log("second guess", res);
+      // console.log("second guess", res);
     }
   );
   if (
     req.body.email === database.users[0].email &&
     req.body.password === database.users[0].password
   ) {
-    res.json("succes");
+    res.json(database.users[0]);
   } else {
     res.status(400).json("error logging in!");
   }
