@@ -8,6 +8,20 @@ const register = require("./controllers/register");
 const signin = require("./controllers/signin");
 const profile = require("./controllers/profile");
 const image = require("./controllers/image");
+const dbConfigObj = require("./knexfile");
+
+let dbConnectionConfig;
+
+switch (process.env.NODE_ENV) {
+  case "production":
+    dbConnectionConfig = dbConfigObj.production;
+    break;
+  default:
+    dbConnectionConfig = dbConfigObj.development;
+}
+
+const appDb = connectToDb(dbConnectionConfig);
+Model.knex(appDb);
 
 const db = knex({
   client: "pg",
