@@ -8,31 +8,26 @@ const register = require("./controllers/register");
 const signin = require("./controllers/signin");
 const profile = require("./controllers/profile");
 const image = require("./controllers/image");
-const dbConfigObj = require("./knexfile");
 
-let dbConnectionConfig;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
-switch (process.env.NODE_ENV) {
-  case "production":
-    dbConnectionConfig = dbConfigObj.production;
-    break;
-  default:
-    dbConnectionConfig = dbConfigObj.development;
-}
-
-const appDb = connectToDb(dbConnectionConfig);
-Model.knex(appDb);
-
+// const db = knex({
+//   client: "pg",
+//   connection: {
+//     host: "127.0.0.1", // localhost
+//     port: 5432,
+//     user: "postgres",
+//     password: "1234",
+//     database: "smart-brain",
+//   }
+// });
 const db = knex({
   client: "pg",
   connection: {
-    host: "127.0.0.1", // localhost
-    port: 5432,
-    user: "postgres",
-    password: "1234",
-    database: "smart-brain",
-  } || {
-    connection: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   },
 });
 
